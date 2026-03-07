@@ -1,29 +1,29 @@
 package com.webshop.project.models;
 
-import com.webshop.project.enums.Role;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Entity
 @Data
-public class User {
+public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    @ManyToOne
+    @JoinColumn(name="order")
+    private Order order;
 
-    private String email;
+    @ManyToOne
+    @JoinColumn(name="product")
+    private Product product;
 
-    private String password;
-
-    private Role role;
-
-
-
+    private int quantity;
+    private double price;
 }
