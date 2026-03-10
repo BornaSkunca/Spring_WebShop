@@ -7,16 +7,22 @@ import com.webshop.project.enums.Status;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.Data;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
+@Table(name="orders")
 public class Order {
 
     @Id
@@ -24,13 +30,14 @@ public class Order {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user",nullable = false)
+    @JoinColumn(name = "user_id",nullable = false)
     private User user;
 
     private LocalDateTime orderDate;
 
     private float totalPrice;
 
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
