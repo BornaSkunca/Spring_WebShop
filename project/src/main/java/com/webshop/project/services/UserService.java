@@ -48,4 +48,16 @@ public class UserService {
         return updatedUser;
     }
 
+    public User deleteUser(User user,Long id){
+        Optional<User> userOpt=userRepository.findById(id);
+
+        if(!userOpt.isPresent()){
+            return null;
+        }
+
+        userRepository.delete(user);
+
+        return user;
+    }
+
 }

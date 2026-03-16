@@ -48,4 +48,16 @@ public class OrderItemService {
 
         return updatedOrderItem;
     }
+
+    public OrderItem deleteOrderItem(OrderItem orderItem,Long id){
+        Optional<OrderItem> orItemOpt=orderItemRepository.findById(id);
+
+        if(!orItemOpt.isPresent()){
+            return null;
+        }
+
+        orderItemRepository.delete(orderItem);
+
+        return orderItem;
+    }
 }

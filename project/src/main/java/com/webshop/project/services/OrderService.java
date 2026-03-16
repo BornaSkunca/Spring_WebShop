@@ -47,4 +47,16 @@ public class OrderService {
 
         return updatedOrder;
     }
+
+    public Order deleteOrder(Order order,Long id){
+        Optional<Order> orderOpt=orderRepository.findById(id);
+
+        if(!orderOpt.isPresent()){
+            return null;
+        }
+
+        orderRepository.delete(order);
+
+        return order;
+    }
 }

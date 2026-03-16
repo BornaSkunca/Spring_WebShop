@@ -23,6 +23,8 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
+    //All endpoints are public
+
     @PostMapping("/register")
     public User register(@RequestBody User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
