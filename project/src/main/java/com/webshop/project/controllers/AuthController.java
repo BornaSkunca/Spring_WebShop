@@ -1,7 +1,6 @@
 package com.webshop.project.controllers;
 
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +33,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public Map<String,String> login(@RequestBody User loginReq){
-        User user=userRepository.findById(loginReq.getId()).orElseThrow();
+
+        User user=userRepository.findByUsername(loginReq.getUsername()).orElseThrow();
 
         if(!passwordEncoder.matches(loginReq.getPassword(), user.getPassword())){
             throw new RuntimeException("Invalid password!");

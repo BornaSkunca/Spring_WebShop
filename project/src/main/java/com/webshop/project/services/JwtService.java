@@ -13,7 +13,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    private final String SECRET_KEY="x1verysecretkeyz7";
+    private final String SECRET_KEY="myverysecuresecretkeythatismorethan32chars12";
 
     public String generateToken(String username){
         return Jwts.builder().setSubject(username).setIssuedAt(new Date())
@@ -29,5 +29,9 @@ public class JwtService {
         return Jwts.parserBuilder()
         .setSigningKey(getSignKey()).build()
         .parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public boolean isTokenValid(String token,String username){
+        return extractUsername(token).equals(username);
     }
 }
