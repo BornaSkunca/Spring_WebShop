@@ -11,47 +11,54 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.webshop.project.DTO.OrderDTO;
+import com.webshop.project.mapper.OrderMapper;
 import com.webshop.project.models.Order;
 import com.webshop.project.services.OrderService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
-
-    public OrderController(OrderService orderService){
-        this.orderService=orderService;
-    }
+    private final OrderMapper orderMapper;
 
     //All endpoints require login
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/orders")
-    public List<Order> getAll(){
-        return this.orderService.getAll();
+    public List<OrderDTO> getAll(){
+        List<Order> orders=this.orderService.getAll();
+        return orders.stream().map(order->orderMapper.toDTO(order)).toList();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','REGULAR')")
     @GetMapping("/orders/{id}")
-    public Order getOrder(@PathVariable Long id){
-        return this.orderService.getOrder(id);
+    public OrderDTO getOrder(@PathVariable Long id){
+        Order order=this.orderService.getOrder(id);
+        return orderMapper.toDTO(order);
     }
 
     @PreAuthorize("hasRole('REGULAR')")
     @PostMapping("/orders")
-    public Order createOrder(@RequestBody Order order){
-        return this.orderService.createOrder(order);
+    public OrderDTO createOrder(@RequestBody Order order){
+        Order returnOrder=this.orderService.createOrder(order);
+        return orderMapper.toDTO(returnOrder);
     }
 
     @PreAuthorize("hasRole('REGULAR')")
     @PutMapping("/orders/{id}")
-    public Order updateOrder(@RequestBody Order order,@PathVariable Long id){
-        return this.orderService.updateOrder(order, id);
+    public OrderDTO updateOrder(@RequestBody Order order,@PathVariable Long id){
+        Order returnOrder=this.orderService.updateOrder(order, id);
+        return orderMapper.toDTO(returnOrder);
     }
 
     @PreAuthorize("hasRole('REGULAR')")
     @DeleteMapping("/orders/{id}")
-    public Order deleteOrder(@RequestBody Order order,@PathVariable Long id){
-        return this.orderService.deleteOrder(order, id);
+    public OrderDTO deleteOrder(@RequestBody Order order,@PathVariable Long id){
+        Order returnOrder=this.orderService.deleteOrder(order, id);
+        return orderMapper.toDTO(returnOrder);
     }
 }

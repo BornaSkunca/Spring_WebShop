@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.webshop.project.DTO.UserDTO;
 import com.webshop.project.enums.Role;
+import com.webshop.project.mapper.UserMapper;
 import com.webshop.project.models.User;
 import com.webshop.project.repositories.UserRepository;
 import com.webshop.project.services.JwtService;
@@ -22,15 +24,18 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final UserMapper userMapper;
 
     //All endpoints are public
 
     @PostMapping("/register")
-    public User register(@RequestBody User user){
+    public UserDTO register(@RequestBody User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.REGULAR);
 
-        return userRepository.save(user);
+        User returnUser=userRepository.save(user);
+
+        return userMapper.toDTO(returnUser);
     }
 
     @PostMapping("/login")

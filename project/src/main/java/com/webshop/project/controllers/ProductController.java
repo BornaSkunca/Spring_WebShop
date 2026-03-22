@@ -11,46 +11,53 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.webshop.project.DTO.ProductDTO;
+import com.webshop.project.mapper.ProductMapper;
 import com.webshop.project.models.Product;
 import com.webshop.project.services.ProductService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
-
-    public ProductController(ProductService productService){
-        this.productService=productService;
-    }
+    private final ProductMapper productMapper;
 
     //Some endpoints require login and some require Admin or Seller roles
 
     @GetMapping("/products")
-    public List<Product> getAll(){
-        return this.productService.getAll();
+    public List<ProductDTO> getAll(){
+        List<Product> products=this.productService.getAll();
+        return products.stream().map(product->productMapper.toDTO(product)).toList();
     }
 
     @GetMapping("/products/{id}")
-    public Product getProduct(@PathVariable Long id){
-        return this.productService.getProduct(id);
+    public ProductDTO getProduct(@PathVariable Long id){
+        Product product=this.productService.getProduct(id);
+        return productMapper.toDTO(product);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','SELLER')")
     @PostMapping("/products")
-    public Product createProduct(@RequestBody Product product){
-        return this.productService.createProduct(product);
+    public ProductDTO createProduct(@RequestBody Product product){
+        Product returnProduct=this.productService.createProduct(product);
+        return productMapper.toDTO(returnProduct);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/products/{id}")
-    public Product updateProduct(@RequestBody Product product,@PathVariable Long id){
-        return this.productService.updateProduct(product, id);
+    public ProductDTO updateProduct(@RequestBody Product product,@PathVariable Long id){
+        Product returnProduct=this.productService.updateProduct(product, id);
+        return productMapper.toDTO(returnProduct);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/products/{id}")
-    public Product deleteProduct(@RequestBody Product product,@PathVariable Long id){
-        return this.productService.deleteProduct(product, id);
+    public ProductDTO deleteProduct(@RequestBody Product product,@PathVariable Long id){
+        Product returnProduct=this.productService.deleteProduct(product, id);
+        return productMapper.toDTO(returnProduct);
     }
 
 }
