@@ -27,6 +27,13 @@ public class OrderController {
 
     //All endpoints require login
 
+    @GetMapping("/orders/my")
+    @PreAuthorize("hasRole('REGULAR')")
+    public List<OrderDTO> getMyOrders(){
+        List<Order> orders=orderService.getUserOrders();
+        return orders.stream().map(order->orderMapper.toDTO(order)).toList();
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/orders")
     public List<OrderDTO> getAll(){

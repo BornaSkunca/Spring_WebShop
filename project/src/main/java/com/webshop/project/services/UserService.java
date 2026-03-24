@@ -5,20 +5,30 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.webshop.project.exception.NotFoundException;
 import com.webshop.project.models.User;
 import com.webshop.project.repositories.UserRepository;
+import com.webshop.project.security.SecurityUtils;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository){
-        this.userRepository=userRepository;
-    }
+    private final SecurityUtils securityUtils;
+    
 
     public List<User> getAllUsers(){
         return this.userRepository.findAll();
+    }
+
+    public User getCurrentUser(){
+        String username=securityUtils.getCurrentUsername();
+
+        return userRepository.findByUsername(username)
+        .orElseThrow(()->new NotFoundException("User not found!"));
     }
 
     public User getUserById(Long id){

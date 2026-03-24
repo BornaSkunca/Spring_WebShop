@@ -32,6 +32,11 @@ public class OrderMapper {
     public OrderItemDTO mapItem(OrderItem orderItem){
         OrderItemDTO dto=new OrderItemDTO();
 
+        dto.setPrice(orderItem.getPrice());
+        dto.setProductId(orderItem.getId());
+        dto.setProductName(orderItem.getProduct().getName());
+        dto.setQuantity(orderItem.getQuantity());
+
         return dto;
     }
 }

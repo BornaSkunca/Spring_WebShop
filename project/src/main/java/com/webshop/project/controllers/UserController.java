@@ -33,7 +33,7 @@ public class UserController {
         return this.userService.getAllUsers();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','REGULAR')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/users/{id}")
     public User getUser(@PathVariable Long id){
         return this.userService.getUserById(id);

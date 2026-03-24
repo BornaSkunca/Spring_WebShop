@@ -8,14 +8,13 @@ import org.springframework.stereotype.Service;
 import com.webshop.project.models.Product;
 import com.webshop.project.repositories.ProductRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
-
-    public ProductService(ProductRepository productRepository){
-        this.productRepository=productRepository;
-    }
 
     public List<Product> getAll(){
         return this.productRepository.findAll();
