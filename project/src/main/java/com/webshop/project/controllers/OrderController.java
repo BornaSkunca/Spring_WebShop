@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.webshop.project.DTO.OrderDTO;
+import com.webshop.project.DTO.UpdateOrderStatusRequest;
 import com.webshop.project.mapper.OrderMapper;
 import com.webshop.project.models.Order;
 import com.webshop.project.services.OrderService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -49,23 +51,16 @@ public class OrderController {
     }
 
     @PreAuthorize("hasRole('REGULAR')")
-    @PostMapping("/orders")
-    public OrderDTO createOrder(@RequestBody Order order){
-        Order returnOrder=this.orderService.createOrder(order);
-        return orderMapper.toDTO(returnOrder);
-    }
-
-    @PreAuthorize("hasRole('REGULAR')")
     @PutMapping("/orders/{id}")
-    public OrderDTO updateOrder(@RequestBody Order order,@PathVariable Long id){
-        Order returnOrder=this.orderService.updateOrder(order, id);
+    public OrderDTO updateOrderStatus(@Valid @RequestBody UpdateOrderStatusRequest request,@PathVariable Long id){
+        Order returnOrder=this.orderService.updateOrder(request, id);
         return orderMapper.toDTO(returnOrder);
     }
 
     @PreAuthorize("hasRole('REGULAR')")
     @DeleteMapping("/orders/{id}")
-    public OrderDTO deleteOrder(@RequestBody Order order,@PathVariable Long id){
-        Order returnOrder=this.orderService.deleteOrder(order, id);
+    public OrderDTO deleteOrder(@PathVariable Long id){
+        Order returnOrder=this.orderService.deleteOrder(id);
         return orderMapper.toDTO(returnOrder);
     }
 }

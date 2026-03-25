@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.webshop.project.DTO.AddToCartRequest;
+import com.webshop.project.DTO.UpdateCartItemRequest;
 import com.webshop.project.enums.Status;
 import com.webshop.project.exception.NotFoundException;
 import com.webshop.project.models.Cart;
@@ -43,27 +45,27 @@ public class CartService {
         });
     }
 
-    public Cart addProduct(Long productId){
+    public Cart addProduct(AddToCartRequest request){
 
         User user=getCurrentUser();
 
         Cart cart=getOrCreateCart(user);
 
-        Product product=productRepository.findById(productId)
+        Product product=productRepository.findById(request.getProductId())
         .orElseThrow(()->new NotFoundException("Product not found!"));
 
         Optional<CartITem> existingItem=cart.getItems()
-        .stream().filter(item->item.getProduct().getId().equals(productId)).findFirst();
+        .stream().filter(item->item.getProduct().getId().equals(request.getProductId())).findFirst();
 
         if(existingItem.isPresent()){
             CartITem item=existingItem.get();
-            item.setQuantity(item.getQuantity()+1);
+            item.setQuantity(item.getQuantity()+request.getQuantity());
             cartITemRepository.save(item);
         }else{
             CartITem cartITem=new CartITem();
             cartITem.setCart(cart);
             cartITem.setProduct(product);
-            cartITem.setQuantity(1);
+            cartITem.setQuantity(request.getQuantity());
 
             cartITemRepository.save(cartITem);
 
@@ -101,11 +103,11 @@ public class CartService {
         return item;
     }
 
-    public Cart updateQuantity(int quantity,Long itemId){
+    public Cart updateQuantity(UpdateCartItemRequest request,Long itemId){
 
         CartITem item=cartITemRepository.findById(itemId).orElseThrow();
 
-        item.setQuantity(quantity);
+        item.setQuantity(request.getQuantity());
 
         cartITemRepository.save(item);
 

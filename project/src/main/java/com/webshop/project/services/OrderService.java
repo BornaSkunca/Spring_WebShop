@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.webshop.project.DTO.UpdateOrderStatusRequest;
 import com.webshop.project.exception.UnauthorizedException;
 import com.webshop.project.models.Order;
 import com.webshop.project.models.User;
@@ -48,27 +49,29 @@ public class OrderService {
         return newOrder;
     }
 
-    public Order updateOrder(Order order,Long id){
+    public Order updateOrder(UpdateOrderStatusRequest request,Long id){
         Optional<Order> orderOpt=this.orderRepository.findById(id);
 
         if(!orderOpt.isPresent()){
             return null;
         }
 
-        Order updatedOrder=this.orderRepository.save(orderOpt.get());
+        Order updatedOrder= new Order();
+        updatedOrder.setStatus(request.getStatus());
+        this.orderRepository.save(updatedOrder);
 
         return updatedOrder;
     }
 
-    public Order deleteOrder(Order order,Long id){
+    public Order deleteOrder(Long id){
         Optional<Order> orderOpt=orderRepository.findById(id);
 
         if(!orderOpt.isPresent()){
             return null;
         }
 
-        orderRepository.delete(order);
+        orderRepository.delete(orderOpt.get());
 
-        return order;
+        return orderOpt.get();
     }
 }

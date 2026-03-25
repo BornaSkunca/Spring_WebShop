@@ -5,6 +5,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.webshop.project.DTO.CreateProductRequest;
+import com.webshop.project.DTO.UpdateProductRequest;
+import com.webshop.project.exception.NotFoundException;
 import com.webshop.project.models.Product;
 import com.webshop.project.repositories.ProductRepository;
 
@@ -30,19 +33,33 @@ public class ProductService {
         return productOpt.get();
     }
 
-    public Product createProduct(Product product){
+    public Product createProduct(CreateProductRequest request){
+        Product product=new Product();
+
+        product.setCategory(request.getCategory());
+        product.setDescription(request.getDescription());
+        product.setName(request.getName());
+        product.setPrice(request.getPrice());
+        product.setSeller(request.getSeller());
+
         Product newProduct=this.productRepository.save(product);
         return newProduct;
     }
 
-    public Product updateProduct(Product product,Long id){
-        Optional<Product> productOpt=this.productRepository.findById(id);
+    public Product updateProduct(UpdateProductRequest request,Long id){
+        Product productSearch=this.productRepository.findById(id)
+        .orElseThrow(()->new NotFoundException("Product not found!"));
 
-        if(!productOpt.isPresent()){
-            return null;
-        }
 
-        Product updatedProduct=this.productRepository.save(productOpt.get());
+        Product updatedProduct= new Product();
+        updatedProduct.setId(id);
+        updatedProduct.setDescription(request.getDescription());
+        updatedProduct.setCategory(request.getCategory());
+        updatedProduct.setName(request.getName());
+        updatedProduct.setPrice(request.getPrice());
+        updatedProduct.setSeller(request.getSeller());
+
+        this.productRepository.save(updatedProduct);
 
         return updatedProduct;
     }

@@ -1,9 +1,9 @@
 package com.webshop.project.controllers;
 
+import com.webshop.project.mapper.UserMapper;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,18 +12,21 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.webshop.project.enums.Role;
+import com.webshop.project.DTO.CreateUserRequest;
+import com.webshop.project.DTO.UpdateUserRequest;
+import com.webshop.project.DTO.UserDTO;
 import com.webshop.project.models.User;
 import com.webshop.project.services.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
+    private final UserMapper userMapper;
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
     //All endpoints require Admin clearance
 
@@ -41,16 +44,18 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/users")
-    public User createUser(@RequestBody User user){
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(Role.ADMIN);
-        return this.userService.createUser(user);
+    public UserDTO createUser(@Valid @RequestBody CreateUserRequest request){ 
+        User user=this.userService.createUser(request);
+        return userMapper.toDTO(user);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','REGULAR')")
     @PutMapping("/users/{id}")
-    public User updateUser(@RequestBody User user,@PathVariable Long id){
-        return this.userService.updateUser(user, id);
+    public UserDTO updateUser(
+        @Valid @RequestBody UpdateUserRequest request,
+        @PathVariable Long id){
+        User user=this.userService.updateUser(request, id);
+        return userMapper.toDTO(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

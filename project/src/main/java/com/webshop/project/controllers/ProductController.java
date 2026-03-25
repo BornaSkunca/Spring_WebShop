@@ -11,11 +11,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.webshop.project.DTO.CreateProductRequest;
 import com.webshop.project.DTO.ProductDTO;
+import com.webshop.project.DTO.UpdateProductRequest;
 import com.webshop.project.mapper.ProductMapper;
 import com.webshop.project.models.Product;
 import com.webshop.project.services.ProductService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -41,15 +44,15 @@ public class ProductController {
 
     @PreAuthorize("hasAnyRole('ADMIN','SELLER')")
     @PostMapping("/products")
-    public ProductDTO createProduct(@RequestBody Product product){
-        Product returnProduct=this.productService.createProduct(product);
+    public ProductDTO createProduct(@Valid @RequestBody CreateProductRequest request){
+        Product returnProduct=this.productService.createProduct(request);
         return productMapper.toDTO(returnProduct);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/products/{id}")
-    public ProductDTO updateProduct(@RequestBody Product product,@PathVariable Long id){
-        Product returnProduct=this.productService.updateProduct(product, id);
+    public ProductDTO updateProduct(@Valid @RequestBody UpdateProductRequest request,@PathVariable Long id){
+        Product returnProduct=this.productService.updateProduct(request, id);
         return productMapper.toDTO(returnProduct);
     }
 

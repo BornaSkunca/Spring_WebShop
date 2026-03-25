@@ -6,13 +6,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.webshop.project.DTO.AddToCartRequest;
 import com.webshop.project.DTO.CartDTO;
 import com.webshop.project.DTO.CartITemDTO;
 import com.webshop.project.DTO.OrderDTO;
+import com.webshop.project.DTO.UpdateCartItemRequest;
 import com.webshop.project.mapper.CartMapper;
 import com.webshop.project.mapper.OrderMapper;
 import com.webshop.project.models.Cart;
@@ -20,6 +23,7 @@ import com.webshop.project.models.CartITem;
 import com.webshop.project.models.Order;
 import com.webshop.project.services.CartService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -38,10 +42,10 @@ public class CartController {
         return cartMapper.toDTO(cart);
     }
 
-    @PostMapping("/add/{productId}")
+    @PostMapping("/add")
     @PreAuthorize("hasRole('REGULAR')")
-    public CartDTO addProduct(@PathVariable Long productId){
-        Cart cart=cartService.addProduct(productId);
+    public CartDTO addProduct(@Valid @RequestBody AddToCartRequest request){ 
+        Cart cart=cartService.addProduct(request); 
         return cartMapper.toDTO(cart);
     }
 
@@ -54,8 +58,10 @@ public class CartController {
 
     @PreAuthorize("hasRole('REGULAR')")
     @PutMapping("/update/{itemId}")
-    public CartDTO updateQuantity(@RequestParam int quantity,@PathVariable Long itemId){
-        Cart cart=cartService.updateQuantity(quantity, itemId);
+    public CartDTO updateQuantity(
+        @Valid @RequestBody UpdateCartItemRequest request,
+        @PathVariable Long itemId){
+        Cart cart=cartService.updateQuantity(request, itemId);
         return cartMapper.toDTO(cart);
     }
 
